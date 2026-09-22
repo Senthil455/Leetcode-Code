@@ -75,25 +75,16 @@ SegTreeNode queryTree(SegTreeNode* tree, int node, int l, int r, int ql, int qr,
 int* resultArray(int* nums, int numsSize, int modVal, int** queries, int queriesSize, 
                  int* queriesColSize, int* returnSize) {
     *returnSize = queriesSize;
-    // 1. Initialize result vector to track remainder counts for each query.
     int* ans = (int*)malloc(queriesSize * sizeof(int));
     if (numsSize <= 0) return ans;
-
-    // 2. Construct segment tree to manage prefix products and remainders.
     SegTreeNode* tree = (SegTreeNode*)malloc(4 * numsSize * sizeof(SegTreeNode));
     buildTree(tree, nums, 1, 0, numsSize - 1, modVal);
-
-    // 3. Process each query sequentially to apply updates and retrieve counts.
     for (int i = 0; i < queriesSize; ++i) {
         int updateIdx = queries[i][0];
         int newVal = queries[i][1];
         int startIdx = queries[i][2];
         int rem = queries[i][3];
-
-        // 4. Update the segment tree node at the given index with the new value.
         updateTree(tree, 1, 0, numsSize - 1, updateIdx, newVal, modVal);
-        
-        // 5. Query the tree to find count of the target remainder and append.
         SegTreeNode res = queryTree(tree, 1, 0, numsSize - 1, startIdx, numsSize - 1, modVal);
         ans[i] = res.cntPerRem[rem];
     }
